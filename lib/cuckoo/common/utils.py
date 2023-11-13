@@ -123,9 +123,7 @@ def make_bytes(value: Union[str, bytes], encoding: str = "latin-1") -> bytes:
 
 
 def is_text_file(file_info, destination_folder, buf, file_data=False):
-
     if any(file_type in file_info.get("type", "") for file_type in texttypes):
-
         extracted_path = os.path.join(
             destination_folder,
             file_info.get(
@@ -828,38 +826,6 @@ def default_converter(v):
     if isinstance(v, int) or issubclass(type(v), int):
         return v & 0xFFFFFFFFFFFFFFFF if v & 0xFFFFFFFF00000000 else v & 0xFFFFFFFF
     return v
-
-
-def classlock(f):
-    """Classlock decorator (created for database.Database).
-    Used to put a lock to avoid sqlite errors.
-    """
-
-    def inner(self, *args, **kwargs):
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-
-        if calframe[1][1].endswith("database.py"):
-            return f(self, *args, **kwargs)
-
-        with self._lock:
-            return f(self, *args, **kwargs)
-
-    return inner
-
-
-class SuperLock:
-    def __init__(self):
-        self.tlock = threading.Lock()
-        self.mlock = multiprocessing.Lock()
-
-    def __enter__(self):
-        self.tlock.acquire()
-        self.mlock.acquire()
-
-    def __exit__(self, type, value, traceback):
-        self.mlock.release()
-        self.tlock.release()
 
 
 def get_options(optstring: str):
