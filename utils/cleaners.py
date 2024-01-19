@@ -30,6 +30,7 @@ from lib.cuckoo.core.database import (
     Database,
     Sample,
     Task,
+    init_database,
 )
 from lib.cuckoo.core.startup import create_structure, init_console_logging
 
@@ -666,6 +667,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    init_database()
     if args.clean:
         cuckoo_clean()
         sys.exit(0)

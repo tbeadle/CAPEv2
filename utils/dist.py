@@ -52,6 +52,7 @@ from lib.cuckoo.core.database import (
     Database,
 )
 from lib.cuckoo.core.database import Task as MD_Task
+from lib.cuckoo.core.database import init_database
 
 dist_conf = Config("distributed")
 main_server_name = dist_conf.distributed.get("main_server_name", "master")
@@ -1552,6 +1553,7 @@ if __name__ == "__main__":
 
     args = p.parse_args()
     log = init_logging(args.debug)
+    init_database()
 
     if args.enable_clean:
         cron_cleaner(args.clean_hours)
@@ -1593,6 +1595,7 @@ if __name__ == "__main__":
         app.run(host=args.host, port=args.port, debug=args.debug, use_reloader=False)
 
 else:
+    init_database(exists_ok=True)
     app = create_app(database_connection=dist_conf.distributed.db)
 
     # this allows run it with gunicorn/uwsgi
